@@ -46,7 +46,6 @@ const createMusicXML = () => {
 
 function App() {
   const containerId = "osmdContainer";
-  const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay(containerId, {
@@ -65,7 +64,7 @@ function App() {
 
   return (
     <>
-      <div ref={containerRef} id={containerId}></div>
+      <div id={containerId}></div>
     </>
   );
 }
