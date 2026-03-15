@@ -1,8 +1,23 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import opensheetmusicdisplay from "opensheetmusicdisplay";
 
-const createMusicXML = () => {
+type Clef = "treble" | "bass";
+
+const createMusicXML = (clef: Clef) => {
+  const clefXML = ((clef: Clef) => {
+    switch (clef) {
+      case "treble":
+        return { sign: "G", line: "2" };
+      case "bass":
+        return { sign: "F", line: "4" };
+      default: {
+        const _unreachable: never = clef;
+        return _unreachable as never;
+      }
+    }
+  })(clef);
+
   return `
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!DOCTYPE score-partwise PUBLIC
@@ -26,8 +41,8 @@ const createMusicXML = () => {
           <beat-type>4</beat-type>
         </time>
         <clef>
-          <sign>G</sign>
-          <line>2</line>
+          <sign>${clefXML.sign}</sign>
+          <line>${clefXML.line}</line>
         </clef>
       </attributes>
       <note>
@@ -46,6 +61,7 @@ const createMusicXML = () => {
 
 function App() {
   const containerId = "osmdContainer";
+  const [clef, setClef] = useState<Clef>("treble");
 
   useEffect(() => {
     const osmd = new opensheetmusicdisplay.OpenSheetMusicDisplay(containerId, {
@@ -55,16 +71,18 @@ function App() {
       autoBeam: true,
     });
 
-    const notation = createMusicXML();
+    const notation = createMusicXML(clef);
 
     osmd.load(notation).then(() => {
       osmd.render();
     });
-  });
+  }, [clef]);
 
   return (
     <>
       <div id={containerId}></div>
+      <button onClick={() => setClef("treble")}>treble</button>
+      <button onClick={() => setClef("bass")}>bass</button>
     </>
   );
 }
